@@ -24,7 +24,7 @@ with open(COUNTER_FILE, "w") as f:
 # --------------------
 st.set_page_config(page_title="SMS Kontrol", page_icon="📱")
 st.title("📱 SMS Dolandırıcılık Tespiti")
-st.info(f"👥 Bu site şu ana kadar {count} kez ziyaret edildi")
+
 
 # --------------------
 # MODEL YÜKLEME
@@ -108,6 +108,7 @@ if admin_password == "546500":
     st.metric("👥 Toplam ziyaret", count)
 elif admin_password != "":
     st.error("Yetkisiz erişim")
+
 
 
 
