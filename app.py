@@ -1,7 +1,6 @@
 import streamlit as st
 import joblib
 import os
-from dotenv import load_dotenv
 from datetime import datetime
 
 # ======================
@@ -177,6 +176,7 @@ if admin_pass:
 
     else:
         st.sidebar.error("Şifre yanlış")
+
 
 
 
