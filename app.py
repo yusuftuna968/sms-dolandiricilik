@@ -2,17 +2,13 @@ import streamlit as st
 import joblib
 from datetime import datetime
 
-# -----------------------
-# GOOGLE ANALYTICS
-# -----------------------
 st.markdown("""
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-63LPCQH8GH"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-63LPCQH8GH');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-63LPCQH8GH');
 </script>
 """, unsafe_allow_html=True)
 # -----------------------
@@ -136,4 +132,5 @@ if admin_pass:
                 )
     else:
         st.sidebar.error("Şifre yanlış")
+
 
