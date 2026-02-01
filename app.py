@@ -1,162 +1,102 @@
 import streamlit as st
 import joblib
-import os
 from datetime import datetime
 
-# ======================
-# ENV / ADMIN
-# ======================
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
-# ======================
-# SAYFA AYARI
-# ======================
+# -----------------------
+# SAYFA AYARLARI
+# -----------------------
 st.set_page_config(
     page_title="SMS Guard",
     page_icon="🛡️",
     layout="centered"
 )
 
-# ======================
+# -----------------------
 # SESSION STATE
-# ======================
-if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = False
-
+# -----------------------
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# ======================
-# DARK MODE TOGGLE
-# ======================
-st.sidebar.title("⚙️ Ayarlar")
-st.session_state.dark_mode = st.sidebar.toggle(
-    "🌙 Koyu Mod", value=st.session_state.dark_mode
-)
+if "visit_count" not in st.session_state:
+    st.session_state.visit_count = 0
 
-# ======================
-# CSS
-# ======================
-if st.session_state.dark_mode:
-    bg = "#0f172a"
-    card = "#020617"
-    text = "#e5e7eb"
-else:
-    bg = "#f7f9fc"
-    card = "#ffffff"
-    text = "#0f172a"
+st.session_state.visit_count += 1
 
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background-color: {bg};
-        color: {text};
-    }}
-    section.main > div {{
-        background-color: {card};
-        padding: 25px;
-        border-radius: 14px;
-        box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
-    }}
-    div.stButton > button {{
-        border-radius: 10px;
-        height: 3em;
-        font-size: 16px;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# ======================
-# MODEL YÜKLE
-# ======================
+# -----------------------
+# MODEL YÜKLEME
+# -----------------------
 model = joblib.load("sms_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
-# ======================
+# -----------------------
 # BAŞLIK
-# ======================
+# -----------------------
 st.markdown(
-    "<h1 style='text-align:center;'>🛡️ SMS Guard</h1>",
-    unsafe_allow_html=True
-)
-st.markdown(
-    "<p style='text-align:center;'>SMS mesajlarını yapay zekâ ile analiz eder</p>",
+    "<h1 style='text-align:center;'>🛡️ SMS Guard</h1>"
+    "<p style='text-align:center;'>SMS Dolandırıcılık Tespit Sistemi</p>",
     unsafe_allow_html=True
 )
 
-# ======================
-# ANA UYGULAMA
-# ======================
+st.info(f"👥 Bu oturumda {st.session_state.visit_count} ziyaret")
+
+# -----------------------
+# SMS GİRİŞ
+# -----------------------
 sms = st.text_area(
     "📩 SMS Metni",
     height=150,
-    placeholder="Örnek: Tebrikler! Ödül kazandınız..."
+    placeholder="Örnek: Tebrikler! 10.000 TL kazandınız..."
 )
 
 analyze = st.button("🔍 Analiz Et", use_container_width=True)
 
 if analyze:
     if sms.strip() == "":
-        st.warning("Lütfen bir mesaj giriniz.")
+        st.warning("Lütfen bir SMS girin.")
     else:
         sms_vec = vectorizer.transform([sms])
-        result = model.predict(sms_vec)[0]
+        sonuc = model.predict(sms_vec)[0]
 
-        timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
-        label = "DOLANDIRICI" if result == 1 else "GÜVENLİ"
-
-        # Admin için geçmişe ekle
-        st.session_state.history.append({
-            "time": timestamp,
-            "sms": sms[:120],
-            "result": label
-        })
-if page == "🏠 Ana Sayfa":
-    # başlık
-    # sms input
-    # analiz butonu
-    # sonuçlar
-
-    st.markdown("""
-    ---
-    ### 🧨 Sık Kullanılan Dolandırıcılık Cümleleri
-    - “Hesabınız askıya alındı”
-    - “Kazandığınız ödülü almak için tıklayın”
-    - “24 saat içinde işlem yapmazsanız…”
-    - “Paketiniz teslim edilemedi”
-    """)
-        if result == 1:
-            st.error("🚨 DOLANDIRICI MESAJ!")
-            st.markdown("""
-            ### ❗ Neden şüpheli olabilir?
-            - Aciliyet hissi oluşturur  
-            - Para / ödül vaadi içerir  
-            - Link veya bilgi ister  
-
-            ⚠️ Linklere tıklamayın, bilgi paylaşmayın.
-            """)
+        if sonuc == 1:
+            st.error("🚨 DOLANDIRICI SMS")
+            aciklama = "DOLANDIRICI"
         else:
-            st.success("✅ GÜVENLİ MESAJ")
+            st.success("✅ GÜVENLİ SMS")
+            aciklama = "GÜVENLİ"
 
-# ======================
+        # ANALİZ GEÇMİŞİ
+        st.session_state.history.append({
+            "time": datetime.now().strftime("%H:%M"),
+            "sms": sms[:80],
+            "result": aciklama
+        })
+
+# -----------------------
 # BİLGİLENDİRME
-# ======================
+# -----------------------
+st.markdown("""
+---
+### 🧨 Sık Kullanılan Dolandırıcılık Cümleleri
+- “Hesabınız askıya alındı”
+- “Kazandığınız ödülü almak için tıklayın”
+- “24 saat içinde işlem yapmazsanız hesabınız kapanacaktır”
+- “Paketiniz teslim edilemedi”
+- “Şüpheli işlem tespit edildi”
+""")
+
 st.markdown("""
 ---
 ### 🛡️ Dolandırıcılıktan Nasıl Korunursun?
-- Bilinmeyen linklere tıklama  
-- SMS ile kimlik / kart bilgisi verme  
-- Resmî kurumları kendin arayarak doğrula  
+- Bilinmeyen linklere tıklama
+- SMS ile TC, şifre, kart bilgisi paylaşma
+- Resmî kurumları kendin arayarak doğrula
 
-📌 Bu uygulama **bilgilendirme amaçlıdır**, %100 doğruluk garantisi vermez.
+⚠️ Bu uygulama **bilgilendirme amaçlıdır**, %100 doğruluk garanti etmez.
 """)
+
 # ======================
 # 🔐 ADMIN PANEL
 # ======================
-
 ADMIN_PASSWORD = "546500"
 
 st.sidebar.markdown("---")
@@ -166,10 +106,6 @@ admin_pass = st.sidebar.text_input(
     "Admin Şifre",
     type="password"
 )
-
-# session_state yoksa oluştur
-if "history" not in st.session_state:
-    st.session_state.history = []
 
 if admin_pass:
     if admin_pass == ADMIN_PASSWORD:
@@ -185,15 +121,5 @@ if admin_pass:
                     f"🕒 {item['time']} | {item['result']}\n\n"
                     f"📩 {item['sms']}"
                 )
-
     else:
         st.sidebar.error("Şifre yanlış")
-
-
-
-
-
-
-
-
-
