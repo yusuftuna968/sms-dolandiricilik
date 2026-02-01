@@ -6,7 +6,6 @@ from datetime import datetime
 # ======================
 # ENV / ADMIN
 # ======================
-load_dotenv()
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # ======================
@@ -176,6 +175,7 @@ if admin_pass:
 
     else:
         st.sidebar.error("Şifre yanlış")
+
 
 
 
