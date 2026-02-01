@@ -142,20 +142,30 @@ st.markdown("""
 
 📌 Bu uygulama **bilgilendirme amaçlıdır**, %100 doğruluk garantisi vermez.
 """)
+# ======================
+# 🔐 ADMIN PANEL
+# ======================
 
-# ======================
-# ADMIN PANEL
-# ======================
+ADMIN_PASSWORD = "546500"
+
 st.sidebar.markdown("---")
 st.sidebar.subheader("🔐 Admin Panel")
 
-admin_pass = st.sidebar.text_input("Admin Şifre", type="password")
+admin_pass = st.sidebar.text_input(
+    "Admin Şifre",
+    type="password"
+)
+
+# session_state yoksa oluştur
+if "history" not in st.session_state:
+    st.session_state.history = []
 
 if admin_pass:
-    if admin_pass == ADMIN_PASSWORD:546500
+    if admin_pass == ADMIN_PASSWORD:
         st.sidebar.success("Giriş başarılı")
 
         st.sidebar.markdown("### 📊 Analiz Geçmişi")
+
         if len(st.session_state.history) == 0:
             st.sidebar.info("Henüz analiz yok.")
         else:
@@ -164,8 +174,11 @@ if admin_pass:
                     f"🕒 {item['time']} | {item['result']}\n\n"
                     f"📩 {item['sms']}"
                 )
+
     else:
         st.sidebar.error("Şifre yanlış")
+
+
 
 
 
