@@ -12,28 +12,45 @@ st.set_page_config(
 )
 
 # =========================
-# ARKA PLAN + TASARIM (CSS)
+# ARKA PLAN + TASARIM (CSS) — DÜZELTİLMİŞ
 # =========================
 st.markdown("""
 <style>
 /* Arka plan */
 .stApp {
-    background: linear-gradient(to bottom right, #f7f9fc, #eef2f7);
+    background: linear-gradient(to bottom right, #f4f6fb, #e9edf5);
+    color: #1f2937; /* GENEL YAZI RENGİ */
 }
 
-/* Ana kart görünümü */
+/* Tüm metinler */
+html, body, [class*="css"]  {
+    color: #1f2937 !important;
+}
+
+/* Ana kart */
 section.main > div {
-    background-color: white;
+    background-color: #ffffff;
     padding: 25px;
     border-radius: 14px;
-    box-shadow: 0px 4px 14px rgba(0,0,0,0.06);
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
 }
 
-/* Buton stili */
+/* Başlıklar */
+h1, h2, h3, h4 {
+    color: #111827;
+}
+
+/* Buton */
 div.stButton > button {
     border-radius: 10px;
     height: 3em;
     font-size: 16px;
+    background-color: #2563eb;
+    color: white;
+}
+
+div.stButton > button:hover {
+    background-color: #1d4ed8;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -100,13 +117,12 @@ if analyze:
 
             st.markdown("""
             ### ❓ Bu mesaj neden dolandırıcı olabilir?
-            Bu tür mesajlar genellikle:
-            - **Acil durum hissi** yaratır,
-            - **Ödül veya para vaadi** içerir,
-            - Resmî kurum adı kullanıp **şüpheli linkler** barındırır,
-            - Kişisel bilgi talep edebilir.
+            - Aciliyet hissi oluşturur  
+            - Ödül veya para vaadi içerir  
+            - Resmî gibi görünen ama sahte linkler barındırır  
+            - Kişisel bilgi talep edebilir  
 
-            ⚠️ Bu tür mesajlarda linklere tıklamanız önerilmez.
+            ⚠️ Linklere tıklamanız önerilmez.
             """)
         else:
             st.success("✅ GÜVENLİ SMS")
@@ -123,9 +139,8 @@ if analyze:
 with st.expander("🧨 Sık Kullanılan Dolandırıcılık Cümleleri"):
     st.markdown("""
     - Hesabınız askıya alındı  
-    - Kazandığınız ödülü almak için tıklayın  
+    - Ödül kazandınız  
     - Kimlik doğrulama gerekli  
-    - 24 saat içinde işlem yapmazsanız hesabınız kapanacaktır  
     - Paketiniz teslim edilemedi  
     - Şüpheli işlem tespit edildi
     """)
@@ -133,15 +148,15 @@ with st.expander("🧨 Sık Kullanılan Dolandırıcılık Cümleleri"):
 with st.expander("🛡️ Dolandırıcılıktan Nasıl Korunursun?"):
     st.markdown("""
     - Bilinmeyen linklere tıklama  
-    - Banka ve resmî kurumları **kendin arayarak** doğrula  
-    - SMS ile **TC, şifre, kart bilgisi paylaşma**  
-    - Şüpheli mesajları sil ve bildir  
+    - Kurumları **kendin arayarak** doğrula  
+    - SMS ile kişisel bilgi paylaşma  
+    - Şüpheli mesajları sil  
 
-    📌 Resmî kurumlar SMS ile kişisel bilgi istemez.
+    📌 Resmî kurumlar SMS ile şifre istemez.
     """)
 
 # =========================
-# ADMİN PANELİ (SADECE SEN)
+# ADMİN PANELİ
 # =========================
 st.markdown("---")
 st.subheader("🔐 Admin Paneli")
@@ -159,13 +174,11 @@ elif admin_password != "":
     st.error("Yetkisiz erişim")
 
 # =========================
-# UYARI + FOOTER
+# FOOTER
 # =========================
 st.markdown("""
 ---
-⚠️ **Uyarı:**  
-Bu uygulama eğitim ve bilgilendirme amaçlıdır.  
-Sonuçlar %100 doğruluk garantisi vermez.
+⚠️ Bu uygulama bilgilendirme amaçlıdır, %100 doğruluk garantisi vermez.
 
 <p style='text-align:center; font-size:12px;'>
 Geliştirici: Yusuf Tuna • Streamlit
