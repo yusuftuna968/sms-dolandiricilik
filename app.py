@@ -114,7 +114,20 @@ if analyze:
             "sms": sms[:120],
             "result": label
         })
+if page == "🏠 Ana Sayfa":
+    # başlık
+    # sms input
+    # analiz butonu
+    # sonuçlar
 
+    st.markdown("""
+    ---
+    ### 🧨 Sık Kullanılan Dolandırıcılık Cümleleri
+    - “Hesabınız askıya alındı”
+    - “Kazandığınız ödülü almak için tıklayın”
+    - “24 saat içinde işlem yapmazsanız…”
+    - “Paketiniz teslim edilemedi”
+    """)
         if result == 1:
             st.error("🚨 DOLANDIRICI MESAJ!")
             st.markdown("""
@@ -175,6 +188,7 @@ if admin_pass:
 
     else:
         st.sidebar.error("Şifre yanlış")
+
 
 
 
