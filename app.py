@@ -1,15 +1,20 @@
 import streamlit as st
 import joblib
 from datetime import datetime
-<!-- Google tag (gtag.js) -->
+
+# -----------------------
+# GOOGLE ANALYTICS
+# -----------------------
+st.markdown("""
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-63LPCQH8GH"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-63LPCQH8GH');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-63LPCQH8GH');
 </script>
+""", unsafe_allow_html=True)
+
 # -----------------------
 # SAYFA AYARLARI
 # -----------------------
@@ -25,11 +30,6 @@ st.set_page_config(
 if "history" not in st.session_state:
     st.session_state.history = []
 
-if "visit_count" not in st.session_state:
-    st.session_state.visit_count = 0
-
-st.session_state.visit_count += 1
-
 # -----------------------
 # MODEL YÜKLEME
 # -----------------------
@@ -44,8 +44,6 @@ st.markdown(
     "<p style='text-align:center;'>SMS Dolandırıcılık Tespit Sistemi</p>",
     unsafe_allow_html=True
 )
-
-st.info(f"👥 Bu oturumda {st.session_state.visit_count} ziyaret")
 
 # -----------------------
 # SMS GİRİŞ
@@ -72,7 +70,6 @@ if analyze:
             st.success("✅ GÜVENLİ SMS")
             aciklama = "GÜVENLİ"
 
-        # ANALİZ GEÇMİŞİ
         st.session_state.history.append({
             "time": datetime.now().strftime("%H:%M"),
             "sms": sms[:80],
@@ -131,6 +128,3 @@ if admin_pass:
                 )
     else:
         st.sidebar.error("Şifre yanlış")
-
-
-
