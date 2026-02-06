@@ -156,6 +156,19 @@ if admin_pass:
 
     else:
         st.sidebar.error("Şifre yanlış")
+st.markdown("""
+---
+### ⚖️ Hukuki Bilgilendirme
+
+Bu site yapay zekâ destekli bir analiz aracıdır.  
+Sonuçlar %100 doğruluk garanti etmez.
+
+Bu platform yalnızca bilgilendirme amaçlıdır.  
+Herhangi bir maddi zarar veya dolandırıcılık durumunda sorumluluk kullanıcıya aittir.
+
+Şüpheli durumlarda ilgili kurumlara başvurmanız önerilir.
+""")
+
 
 
 
