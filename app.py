@@ -31,7 +31,7 @@ with open(COUNTER_FILE, "w") as f:
     f.write(str(count))
 
 # ----------------------
-# OTURUM BAŞLANGIÇ SÜRESİ
+# OTURUM SÜRESİ
 # ----------------------
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
@@ -42,9 +42,6 @@ if "start_time" not in st.session_state:
 model = joblib.load("sms_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
-# ----------------------
-# ANALİZ GEÇMİŞİ
-# ----------------------
 if "history" not in st.session_state:
     st.session_state.history = []
 
@@ -57,7 +54,7 @@ st.write("SMS Dolandırıcılık Tespit Sistemi")
 # ----------------------
 # SMS ANALİZ
 # ----------------------
-sms = st.text_area("📩 SMS Mesajını Yaz")
+sms = st.text_area("📩 SMS mesajını yaz")
 
 analyze = st.button("🔍 Analiz Et", use_container_width=True)
 
@@ -71,6 +68,19 @@ if analyze:
         if sonuc == 1:
             st.error("🚨 DOLANDIRICI SMS")
             sonuc_text = "Dolandırıcı"
+
+            st.markdown("""
+### ❓ Bu mesaj neden dolandırıcı olabilir?
+Bu tür mesajlar genellikle:
+
+- Acil işlem yapmanızı ister  
+- Para veya ödül vaadi içerir  
+- Sahte linkler barındırabilir  
+- Kişisel bilgi talep edebilir  
+
+⚠️ Linklere tıklamadan önce dikkatli olun.
+""")
+
         else:
             st.success("✅ Güvenli SMS")
             sonuc_text = "Güvenli"
@@ -84,17 +94,34 @@ if analyze:
         })
 
 # ----------------------
-# BİLGİ YAZILARI
+# BİLGİLENDİRME BLOKLARI
 # ----------------------
 st.markdown("""
 ---
-### 🧨 Dolandırıcılık Mesajlarında Sık Görülenler
-- “Ödül kazandınız”
-- “Hesabınız askıya alındı”
-- “Hemen linke tıklayın”
-- “Şüpheli işlem var”
+### 🧨 Sık Kullanılan Dolandırıcılık Cümleleri
 
-⚠️ Linklere tıklamadan önce kontrol edin.
+Dolandırıcı mesajlarda sık görülen ifadeler:
+
+- “Hesabınız askıya alındı”
+- “Ödül kazandınız”
+- “Linke tıklayın”
+- “Şüpheli işlem tespit edildi”
+- “Paketiniz teslim edilemedi”
+
+Bu mesajlar genelde panik oluşturmak için gönderilir.
+""")
+
+st.markdown("""
+---
+### 🛡️ Dolandırıcılıktan Nasıl Korunursun?
+
+✔ Bilinmeyen numaralara güvenme  
+✔ SMS ile gelen linklere tıklama  
+✔ Kişisel bilgilerini paylaşma  
+✔ Banka mesajlarını resmi uygulamadan kontrol et  
+✔ Şüpheli mesajları sil veya bildir  
+
+📌 Unutma: Resmî kurumlar SMS ile şifre istemez.
 """)
 
 # ======================
@@ -114,10 +141,8 @@ if admin_pass:
     if admin_pass == ADMIN_PASSWORD:
         st.sidebar.success("Giriş başarılı")
 
-        # 👉 Ziyaretçi sayısı
         st.sidebar.write(f"👥 Toplam ziyaret: {count}")
 
-        # 👉 Ortalama süre hesaplama
         if len(st.session_state.history) > 0:
             ortalama = sum([x["sure"] for x in st.session_state.history]) // len(st.session_state.history)
             st.sidebar.write(f"⏱ Ortalama süre: {ortalama} dk")
@@ -131,6 +156,7 @@ if admin_pass:
 
     else:
         st.sidebar.error("Şifre yanlış")
+
 
 
 
