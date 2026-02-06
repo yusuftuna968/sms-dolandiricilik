@@ -1,6 +1,7 @@
 import streamlit as st
 import joblib
 import os
+import time
 from datetime import datetime
 
 # ----------------------
@@ -13,7 +14,7 @@ st.set_page_config(
 )
 
 # ----------------------
-# ZİYARETÇİ SAYACI (SADECE ADMIN GÖRÜR)
+# ZİYARETÇİ SAYACI
 # ----------------------
 COUNTER_FILE = "counter.txt"
 
@@ -30,13 +31,19 @@ with open(COUNTER_FILE, "w") as f:
     f.write(str(count))
 
 # ----------------------
+# OTURUM BAŞLANGIÇ SÜRESİ
+# ----------------------
+if "start_time" not in st.session_state:
+    st.session_state.start_time = time.time()
+
+# ----------------------
 # MODEL YÜKLEME
 # ----------------------
 model = joblib.load("sms_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
 # ----------------------
-# SESSION STATE
+# ANALİZ GEÇMİŞİ
 # ----------------------
 if "history" not in st.session_state:
     st.session_state.history = []
@@ -50,7 +57,7 @@ st.write("SMS Dolandırıcılık Tespit Sistemi")
 # ----------------------
 # SMS ANALİZ
 # ----------------------
-sms = st.text_area("📩 SMS Mesajı Gir")
+sms = st.text_area("📩 SMS Mesajını Yaz")
 
 analyze = st.button("🔍 Analiz Et", use_container_width=True)
 
@@ -68,10 +75,12 @@ if analyze:
             st.success("✅ Güvenli SMS")
             sonuc_text = "Güvenli"
 
+        gecen_sure = int((time.time() - st.session_state.start_time) / 60)
+
         st.session_state.history.append({
             "time": datetime.now().strftime("%H:%M"),
-            "sms": sms[:60],
-            "result": sonuc_text
+            "result": sonuc_text,
+            "sure": gecen_sure
         })
 
 # ----------------------
@@ -85,7 +94,7 @@ st.markdown("""
 - “Hemen linke tıklayın”
 - “Şüpheli işlem var”
 
-⚠️ Linklere tıklamadan önce mutlaka kontrol edin.
+⚠️ Linklere tıklamadan önce kontrol edin.
 """)
 
 # ======================
@@ -105,20 +114,24 @@ if admin_pass:
     if admin_pass == ADMIN_PASSWORD:
         st.sidebar.success("Giriş başarılı")
 
-        # 👉 Ziyaretçi sayısı sadece burada görünür
+        # 👉 Ziyaretçi sayısı
         st.sidebar.write(f"👥 Toplam ziyaret: {count}")
+
+        # 👉 Ortalama süre hesaplama
+        if len(st.session_state.history) > 0:
+            ortalama = sum([x["sure"] for x in st.session_state.history]) // len(st.session_state.history)
+            st.sidebar.write(f"⏱ Ortalama süre: {ortalama} dk")
 
         st.sidebar.markdown("### 📊 Son Analizler")
 
-        if len(st.session_state.history) == 0:
-            st.sidebar.info("Henüz analiz yok.")
-        else:
-            for item in reversed(st.session_state.history[-10:]):
-                st.sidebar.write(
-                    f"{item['time']} | {item['result']}"
-                )
+        for item in reversed(st.session_state.history[-10:]):
+            st.sidebar.write(
+                f"{item['time']} | {item['result']} | {item['sure']} dk"
+            )
 
     else:
         st.sidebar.error("Şifre yanlış")
+
+
 
 
